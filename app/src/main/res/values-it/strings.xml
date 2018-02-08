@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">IdeaTracker</string>
+    <string name="nwac">Nuovo Account</string>
+    <string name="logerr">Login Fallito!</string>
+    <string name="usrn">Nome Utente</string>
+</resources>

@@ -1,7 +1,8 @@
 <resources>
     <string name="app_name">IdeaTracker</string>
     <string name="usrn">Username</string>
-    <string name="pswd">Password</string>
+    <string name="pswd" translatable="false">Password</string>
     <string name="nwac">New account</string>
-    <string name="login">Login</string>
+    <string name="login" translatable="false">Login</string>
+    <string name="logerr">Login Failed!</string>
 </resources>
