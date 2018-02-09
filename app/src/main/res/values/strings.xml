@@ -5,4 +5,9 @@
     <string name="nwac">New account</string>
     <string name="login" translatable="false">Login</string>
     <string name="logerr">Login Failed!</string>
+    <string name="signup" translatable="false">Sign up</string>
+    <string name="rptpswd">Repeat password</string>
+    <string name="emadr">E-mail address</string>
+    <string name="fstname">Firstname</string>
+    <string name="srname">Surname</string>
 </resources>

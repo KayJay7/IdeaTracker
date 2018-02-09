@@ -4,4 +4,8 @@
     <string name="nwac">Nuovo Account</string>
     <string name="logerr">Login Fallito!</string>
     <string name="usrn">Nome Utente</string>
+    <string name="rptpswd">Ripeti password</string>
+    <string name="emadr">Indirizzo E-mail</string>
+    <string name="fstname">Nome</string>
+    <string name="srname">Cognome</string>
 </resources>
