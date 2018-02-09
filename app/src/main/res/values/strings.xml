@@ -10,4 +10,5 @@
     <string name="emadr">E-mail address</string>
     <string name="fstname">Firstname</string>
     <string name="srname">Surname</string>
+    <string name="cncl">Cancel</string>
 </resources>

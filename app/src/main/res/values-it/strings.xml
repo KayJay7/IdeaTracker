@@ -8,4 +8,5 @@
     <string name="emadr">Indirizzo E-mail</string>
     <string name="fstname">Nome</string>
     <string name="srname">Cognome</string>
+    <string name="cncl">Annulla</string>
 </resources>
