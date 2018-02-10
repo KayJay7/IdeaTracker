@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:orientation="vertical"
-                android:padding="20dp"
+                android:padding="12dp"
                 android:visibility="visible">
 
                 <android.support.design.widget.TextInputLayout
@@ -50,7 +50,9 @@
                     <android.support.design.widget.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/usrn" />
+                        android:hint="@string/usrn"
+                        android:singleLine="true"
+                        android:maxLines="1"/>
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -63,7 +65,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:hint="@string/pswd" />
+                        android:hint="@string/pswd"
+                        android:maxLines="1"/>
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
@@ -73,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
                 android:orientation="vertical"
-                android:padding="20dp"
+                android:padding="12dp"
                 android:visibility="gone">
 
                 <android.support.design.widget.TextInputLayout
@@ -84,7 +87,8 @@
                     <android.support.design.widget.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/fstname" />
+                        android:hint="@string/fstname"
+                        android:maxLines="1"/>
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -95,7 +99,8 @@
                     <android.support.design.widget.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/srname" />
+                        android:hint="@string/srname"
+                        android:maxLines="1"/>
                 </android.support.design.widget.TextInputLayout>
 
 
@@ -108,7 +113,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textEmailAddress"
-                        android:hint="@string/emadr" />
+                        android:hint="@string/emadr"
+                        android:maxLines="1"/>
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -119,7 +125,8 @@
                     <android.support.design.widget.TextInputEditText
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/usrn" />
+                        android:hint="@string/usrn"
+                        android:maxLines="1"/>
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -131,7 +138,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:hint="@string/pswd" />
+                        android:hint="@string/pswd"
+                        android:maxLines="1"/>
                 </android.support.design.widget.TextInputLayout>
 
                 <android.support.design.widget.TextInputLayout
@@ -144,7 +152,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="textPassword"
-                        android:hint="@string/rptpswd" />
+                        android:hint="@string/rptpswd"
+                        android:maxLines="1"/>
                 </android.support.design.widget.TextInputLayout>
 
             </LinearLayout>
@@ -152,12 +161,13 @@
     </ScrollView>
 
     <Button
+        android:tag="true"
         android:id="@+id/newacButton"
         style="@style/Widget.AppCompat.Button.Borderless"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginStart="12dp"
         android:text="@string/nwac"
         android:onClick="change"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -168,9 +178,10 @@
         style="@style/Widget.AppCompat.Button.Borderless.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="12dp"
+        android:layout_marginEnd="12dp"
         android:text="@string/login"
+        android:onClick="login"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="navigation_view">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/profRadio"
+            android:icon="@drawable/ic_account_circle"
+            android:title="@string/mprof" /><!--my profile-->
+        <item
+            android:id="@+id/appRadio"
+            android:icon="@drawable/ic_android"
+            android:title="@string/mapp" /><!--my applications-->
+        <item
+            android:id="@+id/bugsRadio"
+            android:icon="@drawable/ic_bug_report"
+            android:title="@string/mbugs" /><!--my bugs-->
+    </group>
+
+    <item android:title="@string/comm">
+        <menu>
+            <item
+                android:id="@+id/nwappButton"
+                android:icon="@drawable/ic_touch_app"
+                android:title="@string/addapp" /><!--new app-->
+            <item
+                android:id="@+id/nwidButton"
+                android:icon="@drawable/ic_lightbulb_outline"
+                android:title="@string/nwid" /><!--new idea-->
+            <item
+                android:id="@+id/logoutButton"
+                android:icon="@drawable/ic_power_settings"
+                android:title="@string/logout" /><!--logout-->
+
+        </menu>
+    </item>
+
+</menu>

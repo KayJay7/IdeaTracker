@@ -9,4 +9,14 @@
     <string name="fstname">Nome</string>
     <string name="srname">Cognome</string>
     <string name="cncl">Annulla</string>
+    <string name="addapp">Nuova applicazione</string>
+    <string name="modapp">Modifica applicazione</string>
+    <string name="action_settings">Impostazioni</string>
+    <string name="navigation_drawer_close">Chiudi menù di navigazione</string>
+    <string name="navigation_drawer_open">Apri menù di navigazione</string>
+    <string name="search">Search</string>
+    <string name="nwid">Nuova idea</string>
+    <string name="mbugs">I miei bug</string>
+    <string name="mapp">Le mie app</string>
+    <string name="mprof">Il mio profilo</string>
 </resources>
