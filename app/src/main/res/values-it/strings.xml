@@ -19,4 +19,6 @@
     <string name="mbugs">I miei bug</string>
     <string name="mapp">Le mie app</string>
     <string name="mprof">Il mio profilo</string>
+    <string name="disconnect">Disconnessione</string>
+    <string name="are_you_sure_disconnect">Sei sicuro di voler uscire?</string>
 </resources>

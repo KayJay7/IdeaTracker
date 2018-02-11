@@ -1,6 +1,8 @@
 package com.group.ideatracker.ideatracker
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
@@ -14,11 +16,12 @@ import android.view.MenuItem
 import android.view.inputmethod.InputMethodManager
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
+import kotlinx.android.synthetic.main.content_main.*
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object {
-        val TAG=MainActivity::class.java.simpleName
+        val TAG = MainActivity::class.java.simpleName
     }
 
 
@@ -33,6 +36,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
+
+        selectFirst()
+
     }
 
     override fun onBackPressed() {
@@ -54,7 +60,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-                Log.d(TAG,"QUERY: $newText")
+                Log.d(TAG, "QUERY: $newText")
                 return false
             }
         })
@@ -67,24 +73,28 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         // as you specify a parent activity in AndroidManifest.xml.
 
         return when (item.itemId) {
-           // R.id.action_settings -> true
-            else-> super.onOptionsItemSelected(item)
+        // R.id.action_settings -> true
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
+        scrInflateHere.removeAllViews()
+
         when (item.itemId) {
             R.id.profRadio -> {
-               // setContentView(R.layout.content_main)
-                supportActionBar?.title="Nome cognome"
-                supportActionBar?.subtitle="username99"
+
+                selectFirst()
             }
             R.id.appRadio -> {
 
+
+                layoutInflater.inflate(R.layout.layout_applications,scrInflateHere)
+
             }
             R.id.bugsRadio -> {
-
+                layoutInflater.inflate(R.layout.layout_bugs,scrInflateHere)
             }
             R.id.nwappButton -> {
 
@@ -93,13 +103,33 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
             }
             R.id.logoutButton -> {
-
+                AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                        .setTitle(R.string.disconnect)
+                        .setMessage(R.string.are_you_sure_disconnect)
+                        .setPositiveButton(android.R.string.ok, { dialog, _ ->
+                            run {
+                                dialog.dismiss()
+                                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                                finish()
+                            }
+                        }).setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                        .setCancelable(false)
+                        .show()
             }
         }
 
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
+
+    private fun selectFirst(){
+
+        layoutInflater.inflate(R.layout.layout_profile,scrInflateHere)
+
+        supportActionBar?.title = "Nome cognome"
+        supportActionBar?.subtitle = "username99"
+    }
+
 }
 
 /*

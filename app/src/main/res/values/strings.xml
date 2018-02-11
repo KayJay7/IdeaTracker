@@ -27,5 +27,8 @@
     <string name="mbugs">My bugs</string>
     <string name="mapp">My applications</string>
     <string name="mprof">My profile</string>
+    <string name="disconnect">Disconnect</string>
+
+    <string name="are_you_sure_disconnect">Are you sure do you want to disconnect?</string>
 
 </resources>
