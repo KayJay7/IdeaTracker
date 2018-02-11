@@ -8,6 +8,17 @@
     tools:context="com.group.ideatracker.ideatracker.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:indeterminate="true"
+        android:id="@+id/progressBar"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:visibility="gone"/>
+
     <ScrollView
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -15,7 +26,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
-
+        app:layout_constraintTop_toBottomOf="@id/progressBar"/>
 
 </android.support.constraint.ConstraintLayout>

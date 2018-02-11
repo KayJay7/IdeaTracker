@@ -30,5 +30,9 @@
     <string name="disconnect">Disconnect</string>
 
     <string name="are_you_sure_disconnect">Are you sure do you want to disconnect?</string>
-
+    <string name="warning">Warning!</string>
+    <string name="timeout_error_message">The connection was timed out</string>
+    <string name="retry">Retry</string>
+    <string name="cant_connect">Unable to connect to the server, check your Internet connection!</string>
+    <string name="invalid_url">Invalid URL</string>
 </resources>

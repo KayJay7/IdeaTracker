@@ -21,4 +21,9 @@
     <string name="mprof">Il mio profilo</string>
     <string name="disconnect">Disconnessione</string>
     <string name="are_you_sure_disconnect">Sei sicuro di voler uscire?</string>
+    <string name="warning">Attenzione!</string>
+    <string name="timeout_error_message">Il tempo per la connessione è scaduto</string>
+    <string name="retry">Riprova</string>
+    <string name="cant_connect">Impossibile colegarsia l server, controlla la tua connessione Internet!</string>
+    <string name="invalid_url">URL non valido</string>
 </resources>

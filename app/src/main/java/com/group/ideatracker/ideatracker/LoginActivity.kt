@@ -7,7 +7,6 @@ import android.view.View
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
-    //var login=true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +20,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     fun change(view:View){
-        //if(login){
         if(view.tag.toString().toBoolean()){
             loginFields.visibility=View.GONE
             signupFields.visibility=View.VISIBLE

@@ -4,7 +4,6 @@ import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.design.widget.Snackbar
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -13,15 +12,32 @@ import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.group.ideatracker.ideatracker.task.GETTask
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     companion object {
+        const val time: Long = 15
         val TAG = MainActivity::class.java.simpleName
+    }
+
+    private val startLoading = Runnable {
+        progressBar.visibility = View.VISIBLE
+        scrInflateHere.alpha = 0.4f
+        window.setFlags(16, 16)
+    }
+
+    private val stopLoading = Runnable {
+        progressBar.visibility = View.GONE
+        scrInflateHere.alpha = 1f
+        window.clearFlags(16)
     }
 
 
@@ -90,14 +106,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.appRadio -> {
 
 
-                layoutInflater.inflate(R.layout.layout_applications,scrInflateHere)
+                layoutInflater.inflate(R.layout.layout_applications, scrInflateHere)
 
             }
             R.id.bugsRadio -> {
-                layoutInflater.inflate(R.layout.layout_bugs,scrInflateHere)
+                layoutInflater.inflate(R.layout.layout_bugs, scrInflateHere)
             }
             R.id.nwappButton -> {
-
+                startGETTask();
             }
             R.id.nwidButton -> {
 
@@ -122,9 +138,44 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun selectFirst(){
+    private fun startGETTask() {
+        runOnUiThread(startLoading)
+        val runnable = Runnable {
+            val task = GETTask()
+            task.execute()
 
-        layoutInflater.inflate(R.layout.layout_profile,scrInflateHere)
+            try {
+                val json = task.get(time, TimeUnit.SECONDS)
+                Log.d(TAG, json.toString())
+            } catch (exc: TimeoutException) {
+                runOnUiThread {
+                    AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog)
+                            .setTitle(R.string.warning)
+                            .setMessage(R.string.timeout_error_message)
+                            .setIcon(R.drawable.ic_timer)
+                            .setPositiveButton(R.string.retry, { dialog, _ ->
+                                run {
+                                    startGETTask()
+                                    dialog.dismiss()
+                                }
+                            })
+                            .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                            .setCancelable(false)
+                            .show()
+                }
+            } finally {
+                runOnUiThread(stopLoading)
+            }
+        }
+
+        Thread(Runnable {
+            runnable.run()
+        }).start()
+    }
+
+    private fun selectFirst() {
+
+        layoutInflater.inflate(R.layout.layout_profile, scrInflateHere)
 
         supportActionBar?.title = "Nome cognome"
         supportActionBar?.subtitle = "username99"
