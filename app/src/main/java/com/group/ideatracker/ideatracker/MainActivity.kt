@@ -3,7 +3,9 @@ package com.group.ideatracker.ideatracker
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
@@ -14,12 +16,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import com.group.ideatracker.ideatracker.task.GETTask
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import java.util.concurrent.TimeUnit
-import java.util.concurrent.TimeoutException
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -40,9 +39,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         window.clearFlags(16)
     }
 
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar)
 
@@ -83,37 +86,25 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-
-        return when (item.itemId) {
-        // R.id.action_settings -> true
-            else -> super.onOptionsItemSelected(item)
-        }
-    }
-
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
-        scrInflateHere.removeAllViews()
+
 
         when (item.itemId) {
             R.id.profRadio -> {
-
+                scrInflateHere.removeAllViews()
                 selectFirst()
             }
             R.id.appRadio -> {
-
-
+                scrInflateHere.removeAllViews()
                 layoutInflater.inflate(R.layout.layout_applications, scrInflateHere)
-
             }
             R.id.bugsRadio -> {
+                scrInflateHere.removeAllViews()
                 layoutInflater.inflate(R.layout.layout_bugs, scrInflateHere)
             }
             R.id.nwappButton -> {
-                startGETTask();
+                //startGETTask();
             }
             R.id.nwidButton -> {
 
@@ -124,6 +115,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         .setMessage(R.string.are_you_sure_disconnect)
                         .setPositiveButton(android.R.string.ok, { dialog, _ ->
                             run {
+
+                                val editor = sharedPreferences.edit()
+                                editor.clear()
+
+                                editor.apply()
+
                                 dialog.dismiss()
                                 startActivity(Intent(this@MainActivity, LoginActivity::class.java))
                                 finish()
@@ -138,9 +135,11 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return true
     }
 
-    private fun startGETTask() {
+    /*private fun startGETTask() {
         runOnUiThread(startLoading)
         val runnable = Runnable {
+
+
             val task = GETTask()
             task.execute()
 
@@ -171,7 +170,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         Thread(Runnable {
             runnable.run()
         }).start()
-    }
+    }*/
 
     private fun selectFirst() {
 

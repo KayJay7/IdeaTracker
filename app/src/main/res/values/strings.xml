@@ -35,4 +35,14 @@
     <string name="retry">Retry</string>
     <string name="cant_connect">Unable to connect to the server, check your Internet connection!</string>
     <string name="invalid_url">Invalid URL</string>
+
+    <string name="preference_username" translatable="false">com.group.ideatracker.ideatracker.USERNAME_APP_KEY</string>
+    <string name="preference_passkey" translatable="false">com.group.ideatracker.ideatracker.PASSKEY</string>
+    <string name="fill_field">You must fill this field</string>
+
+    <string name="passwords_doesnt_match">Passwords doesn\'t match</string>
+    <string name="username_already_exists">Username already exists</string>
+
+    <string name="mail_already_registered">E-mail address already registered</string>
+
 </resources>

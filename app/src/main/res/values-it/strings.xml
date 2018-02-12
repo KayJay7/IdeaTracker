@@ -26,4 +26,7 @@
     <string name="retry">Riprova</string>
     <string name="cant_connect">Impossibile colegarsia l server, controlla la tua connessione Internet!</string>
     <string name="invalid_url">URL non valido</string>
+    <string name="fill_field">Devi compilare questo campo</string>
+    <string name="username_already_exists">Username già esistente</string>
+    <string name="mail_already_registered">Indirizzo email già registrato</string>
 </resources>

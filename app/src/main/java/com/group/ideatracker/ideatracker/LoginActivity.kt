@@ -1,38 +1,190 @@
 package com.group.ideatracker.ideatracker
 
+import android.app.AlertDialog
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
+import android.content.SharedPreferences
 import android.os.Bundle
+import android.preference.PreferenceManager
+import android.support.v7.app.AppCompatActivity
 import android.view.View
+import com.group.ideatracker.ideatracker.task.PUTTask
 import kotlinx.android.synthetic.main.activity_login.*
+import org.json.JSONException
+import org.json.JSONObject
+import java.util.concurrent.TimeUnit
 
 class LoginActivity : AppCompatActivity() {
+
+    companion object {
+        private const val time: Long = 15
+    }
+
+    private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
+
+        if (sharedPreferences.getString(getString(R.string.preference_passkey), "").isNotBlank() && sharedPreferences.getString(getString(R.string.preference_username), "").isNotBlank())
+            startActivity(Intent(this, MainActivity::class.java))
+
     }
 
-    fun login(view:View) {
-        val intent= Intent(this,MainActivity::class.java)
-        startActivity(intent)
+    private val startLoading = Runnable {
+        progressBar.visibility = View.VISIBLE
+        mainPage.alpha = 0.4f
+        window.setFlags(16, 16)
+    }
+
+    private val stopLoading = Runnable {
+        progressBar.visibility = View.GONE
+        mainPage.alpha = 1f
+        window.clearFlags(16)
+    }
+
+    fun login(view: View) {
+
+        resetErrors()
+
+        val username = tilUsername.editText!!.text.toString().trim()
+
+        if (username.isBlank())
+            tilUsername.error = getString(R.string.fill_field)
+        else {
+
+            val password = tilPassword.editText!!.text.toString()
+
+            if (password.isEmpty())
+                tilPassword.error = getString(R.string.fill_field)
+            else {
+
+                if (newacButton.tag.toString().toBoolean()) {
+
+                    val hashMap = HashMap<String, String>()
+                    hashMap["username"] = username
+                    hashMap["password"] = password
+                    //TODO check login
+
+                    writeAndStart(username, password)
+
+                } else {
+                    val rPassword = tilRepeatPassword.editText!!.text.toString()
+                    if (rPassword.isEmpty())
+                        tilRepeatPassword.error = getString(R.string.fill_field)
+                    else if (rPassword.compareTo(password) != 0) {
+                        tilPassword.error = getString(R.string.passwords_doesnt_match)
+                        tilRepeatPassword.error = getString(R.string.passwords_doesnt_match)
+                    } else {
+                        val firstName = tilFirstName.editText!!.text.toString().trim()
+                        if (firstName.isBlank())
+                            tilFirstName.error = getString(R.string.fill_field)
+                        else {
+                            val surname = tilSurname.editText!!.text.toString().trim()
+                            if (surname.isBlank())
+                                tilSurname.error = getString(R.string.fill_field)
+                            else {
+                                val mail = tilMail.editText!!.toString().trim()
+                                if (mail.isBlank())
+                                    tilMail.error = getString(R.string.fill_field)
+                                else {
+                                    val json = JSONObject()
+
+                                    json.apply {
+                                        put("username", username)
+                                        put("password", password)
+                                        put("nome", firstName)
+                                        put("cognome", surname)
+                                        put("mail", mail)
+                                    }
+
+                                    runOnUiThread(startLoading)
+
+                                    val runnable = Runnable {
+                                        val task = PUTTask(json)
+                                        task.execute("user")
+
+                                        val response = task.get(time, TimeUnit.SECONDS)
+                                        runOnUiThread {
+                                            runOnUiThread(stopLoading)
+                                            if (response.getBoolean("status"))
+                                                writeAndStart(username, password)
+                                            else {
+
+                                                try {
+                                                    AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                                            .setIcon(response.getInt("drawable"))
+                                                            .setMessage(response.getInt("message"))
+                                                            .setCancelable(false)
+                                                            .setPositiveButton(R.string.retry, { dialog, _ ->
+                                                                run {
+                                                                    dialog.dismiss()
+                                                                    login(view)
+                                                                }
+                                                            })
+                                                            .show()
+                                                } catch (jexc: JSONException) {
+                                                    //TODO handle errors 100 mail already exists and 101 username already exists
+                                                }
+
+                                            }
+                                        }
+                                    }
+
+                                    Thread(runnable).start()
+
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private fun writeAndStart(username: String, password: String) {
+        val editor = sharedPreferences.edit()
+
+        editor.apply {
+            putString(getString(R.string.preference_username), username)
+            putString(getString(R.string.preference_passkey), password)
+        }
+        editor.apply()
+
+        startActivity(Intent(this, MainActivity::class.java))
         finish()
     }
 
-    fun change(view:View){
-        if(view.tag.toString().toBoolean()){
-            loginFields.visibility=View.GONE
-            signupFields.visibility=View.VISIBLE
-            txvHelloWorld.text=getString(R.string.signup)
-            newacButton.text=getText(R.string.cncl)
-            loginButton.text=getText(R.string.signup)
-        }else{
-            loginFields.visibility=View.VISIBLE
-            signupFields.visibility=View.GONE
-            txvHelloWorld.text=getString(R.string.login)
-            newacButton.text=getText(R.string.nwac)
-            loginButton.text=getText(R.string.login)
+    private fun resetErrors() {
+        tilUsername.error = null
+        tilPassword.error = null
+        tilRepeatPassword.error = null
+        tilFirstName.error = null
+        tilSurname.error = null
+        tilMail.error = null
+    }
+
+
+    fun change(view: View) {
+
+        resetErrors()
+
+        if (view.tag.toString().toBoolean()) {
+
+            signupFields.visibility = View.VISIBLE
+            tilRepeatPassword.visibility = View.VISIBLE
+            txvHelloWorld.text = getString(R.string.signup)
+            newacButton.text = getText(R.string.cncl)
+            loginButton.text = getText(R.string.signup)
+        } else {
+            signupFields.visibility = View.GONE
+            tilRepeatPassword.visibility = View.GONE
+            txvHelloWorld.text = getString(R.string.login)
+            newacButton.text = getText(R.string.nwac)
+            loginButton.text = getText(R.string.login)
         }
-        view.tag=view.tag.toString().toBoolean().not()
+        view.tag = view.tag.toString().toBoolean().not()
     }
 }
