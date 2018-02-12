@@ -11,6 +11,7 @@ import com.group.ideatracker.ideatracker.task.PUTTask
 import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONException
 import org.json.JSONObject
+import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
 
 class LoginActivity : AppCompatActivity() {
@@ -22,6 +23,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var sharedPreferences: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
@@ -64,10 +66,10 @@ class LoginActivity : AppCompatActivity() {
 
                     val hashMap = HashMap<String, String>()
                     hashMap["username"] = username
-                    hashMap["password"] = password
+                    hashMap["password"] = hashString("SHA-256", password)
                     //TODO check login
 
-                    writeAndStart(username, password)
+                    writeAndStart(username, hashMap["password"]!!)
 
                 } else {
                     val rPassword = tilRepeatPassword.editText!!.text.toString()
@@ -85,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
                             if (surname.isBlank())
                                 tilSurname.error = getString(R.string.fill_field)
                             else {
-                                val mail = tilMail.editText!!.toString().trim()
+                                val mail = tilMail.editText!!.text.toString().trim()
                                 if (mail.isBlank())
                                     tilMail.error = getString(R.string.fill_field)
                                 else {
@@ -93,7 +95,7 @@ class LoginActivity : AppCompatActivity() {
 
                                     json.apply {
                                         put("username", username)
-                                        put("password", password)
+                                        put("password", hashString("SHA-256", password))
                                         put("nome", firstName)
                                         put("cognome", surname)
                                         put("mail", mail)
@@ -143,6 +145,23 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun hashString(type: String, input: String): String {
+        val HEX_CHARS = "0123456789ABCDEF"
+        val bytes = MessageDigest
+                .getInstance(type)
+                .digest(input.toByteArray())
+        val result = StringBuilder(bytes.size * 2)
+
+        bytes.forEach {
+            val i = it.toInt()
+            result.append(HEX_CHARS[i shr 4 and 0x0f])
+            result.append(HEX_CHARS[i and 0x0f])
+        }
+
+        return result.toString()
+    }
+
 
     private fun writeAndStart(username: String, password: String) {
         val editor = sharedPreferences.edit()

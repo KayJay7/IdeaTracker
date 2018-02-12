@@ -25,7 +25,7 @@ class GETTask(hashMap: HashMap<String, String>) : AsyncTask<String, Void, JSONOb
     override fun doInBackground(vararg p0: String?): JSONObject {
 
         try {
-            val urlConnection = URL("http://192.168.1.105:8000/${p0[0]}/").openConnection() as HttpURLConnection
+            val urlConnection = URL("http://192.168.1.105:8000/${p0[0]}/?$params").openConnection() as HttpURLConnection
             urlConnection.setRequestProperty("Content-Type", "application/json")
             urlConnection.requestMethod = "GET"
             urlConnection.doOutput = true
@@ -68,7 +68,7 @@ class GETTask(hashMap: HashMap<String, String>) : AsyncTask<String, Void, JSONOb
         val builder = StringBuilder()
 
         for ((key) in hashMap)
-            builder.append(key, "=${hashMap[key]}")
+            builder.append(key, "=${hashMap[key]}&")
 
         builder.setLength(builder.length - 1)
 
