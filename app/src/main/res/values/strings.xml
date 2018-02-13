@@ -12,15 +12,12 @@
     <string name="srname">Surname</string>
     <string name="cncl">Cancel</string>
     <string name="title_activity_main" translatable="false">MainActivity</string>
-
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
     <string name="addapp">New application</string>
     <string name="modapp">Modify application</string>
     <string name="comm" translatable="false">Community</string>
-
     <string name="search">Search</string>
     <string name="nwid">New idea</string>
     <string name="logout" translatable="false">Logout</string>
@@ -28,27 +25,29 @@
     <string name="mapp">My applications</string>
     <string name="mprof">My profile</string>
     <string name="disconnect">Disconnect</string>
-
     <string name="are_you_sure_disconnect">Are you sure do you want to disconnect?</string>
     <string name="warning">Warning!</string>
     <string name="timeout_error_message">The connection was timed out</string>
     <string name="retry">Retry</string>
     <string name="cant_connect">Unable to connect to the server, check your Internet connection!</string>
     <string name="invalid_url">Invalid URL</string>
-
     <string name="preference_username" translatable="false">com.group.ideatracker.ideatracker.USERNAME_APP_KEY</string>
     <string name="preference_passkey" translatable="false">com.group.ideatracker.ideatracker.PASSKEY</string>
     <string name="fill_field">You must fill this field</string>
-
     <string name="passwords_doesnt_match">Passwords doesn\'t match</string>
     <string name="username_already_exists">Username already exists</string>
-
     <string name="mail_already_registered">E-mail address already registered</string>
-
     <string name="error_during_registration">Error during registration</string>
     <string name="user_registered">An email for the confirmation has been sent, check it out to complete the registration!</string>
     <string name="user_needs_confirmation">This account needs confirmation, check your email address!</string>
     <string name="wrong_credentials">Wrong credentials</string>
     <string name="mail_not_valid">Email address not valid</string>
     <string name="done">Done</string>
+    <string name="total_applications">Total applications</string>
+    <string name="total_ideas_bugs">Total ideas or bugs segnalated</string>
+    <string name="received_ideas_bugs">Received ideas or bugs</string>
+    <string name="received_answers">Received answers</string>
+    <string name="def0" translatable="false">0</string>
+    <string name="last_week_answer">Answer received in the last week</string>
+    <string name="written_answers">Written answers</string>
 </resources>

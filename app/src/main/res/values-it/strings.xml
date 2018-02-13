@@ -35,4 +35,11 @@
     <string name="user_needs_confirmation">Questo utente richiede conferma, controlla la tua casella di posta!</string>
     <string name="mail_not_valid">Indirizzo email non valido</string>
     <string name="done">Fatto</string>
+    <string name="passwords_doesnt_match">Le password non corrispondono</string>
+    <string name="total_applications">Totale applicazioni</string>
+    <string name="total_ideas_bugs">Idee e bug segnalati in totale</string>
+    <string name="received_ideas_bugs">Idee e bug ricevuti</string>
+    <string name="received_answers">Risposte ricevute</string>
+    <string name="last_week_answer">Risposte ricevute nell\'ultima settimana</string>
+    <string name="written_answers">Risposte inviate</string>
 </resources>
