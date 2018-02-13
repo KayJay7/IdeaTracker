@@ -212,6 +212,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                         txvFirstNameSurname.text = (json.getJSONObject("data").getString("nome") + " " + json.getJSONObject("data").getString("cognome"))
                         view.findViewById<TextView>(R.id.txvUsername).text = usr
                         mail.text = json.getJSONObject("data").getString("mail")
+                        view.findViewById<TextView>(R.id.txvTotalApps).text = json.getJSONObject("data").getInt("appcount").toString()
 
                         //layoutInflater.inflate(R.layout.layout_applications,scrInflateHere)
                     } else {
