@@ -1,6 +1,7 @@
 package com.group.ideatracker.ideatracker.task
 
 import android.os.AsyncTask
+import android.util.Log
 import com.group.ideatracker.ideatracker.R
 import org.json.JSONObject
 import java.io.DataOutputStream
@@ -42,7 +43,7 @@ class PUTTask(val toPut: JSONObject) : AsyncTask<String, Void, JSONObject>() {
             json.apply {
                 put("status", false)
                 put("message", R.string.invalid_url)
-                put("drawable", R.drawable.ic_timer)
+                put("drawable", R.drawable.ic_web)
             }
 
         } catch (io: IOException) {
@@ -50,10 +51,12 @@ class PUTTask(val toPut: JSONObject) : AsyncTask<String, Void, JSONObject>() {
             json.apply {
                 put("status", false)
                 put("message", R.string.cant_connect)
-                put("drawable", R.drawable.ic_web)
+                put("drawable", R.drawable.ic_lan_disconnect)
             }
 
         }
+
+        Log.d(PUTTask::class.java.simpleName, "JSON: $json")
 
         return json
     }

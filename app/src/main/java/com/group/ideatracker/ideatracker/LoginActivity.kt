@@ -6,18 +6,22 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.View
+import com.group.ideatracker.ideatracker.task.GETTask
 import com.group.ideatracker.ideatracker.task.PUTTask
 import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.security.MessageDigest
 import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class LoginActivity : AppCompatActivity() {
 
     companion object {
         private const val time: Long = 15
+        private val TAG = LoginActivity::class.java.simpleName
     }
 
     private lateinit var sharedPreferences: SharedPreferences
@@ -64,12 +68,89 @@ class LoginActivity : AppCompatActivity() {
 
                 if (newacButton.tag.toString().toBoolean()) {
 
-                    val hashMap = HashMap<String, String>()
-                    hashMap["username"] = username
-                    hashMap["password"] = hashString("SHA-256", password)
-                    //TODO check login
+                    runOnUiThread(startLoading)
 
-                    writeAndStart(username, hashMap["password"]!!)
+                    val runnable = Runnable {
+                        val hashMap = HashMap<String, String>()
+                        hashMap["username"] = username
+                        hashMap["password"] = hashString("SHA-256", password)
+
+                        val task = GETTask(hashMap)
+                        task.execute("user")
+
+                        try {
+                            val json = task.get(time, TimeUnit.SECONDS)
+                            Log.d(TAG, "ERROR CODE: $json")
+
+                            runOnUiThread(stopLoading)
+
+                            runOnUiThread {
+                                if (json.getBoolean("status"))
+                                    writeAndStart(username, hashMap["password"]!!)
+                                else {
+                                    try {
+                                        AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                                .setIcon(json.getInt("drawable"))
+                                                .setMessage(json.getInt("message"))
+                                                .setTitle(R.string.warning)
+                                                .setCancelable(false)
+                                                .setPositiveButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                                .setNegativeButton(R.string.retry, { dialog, _ ->
+                                                    run {
+                                                        login(view)
+                                                        dialog.dismiss()
+                                                    }
+                                                })
+                                                .show()
+                                    } catch (jexc: JSONException) {
+                                        when (json.getInt("errorCode")) {
+                                            200 -> {
+                                                tilPassword.error = getString(R.string.wrong_credentials)
+                                                tilUsername.error = getString(R.string.wrong_credentials)
+                                            }
+                                            201 -> AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                                    .setTitle(R.string.warning)
+                                                    .setIcon(R.drawable.ic_markunread_mailbox)
+                                                    .setMessage(R.string.user_needs_confirmation)
+                                                    .setCancelable(false)
+                                                    .setPositiveButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                                    .setNegativeButton(R.string.retry, { dialog, _ ->
+                                                        run {
+                                                            login(view)
+                                                            dialog.dismiss()
+                                                        }
+                                                    })
+                                                    .show()
+
+                                        }
+                                    }
+
+                                    //Log.e(TAG,"ERROR: $json")
+                                }
+                            }
+                        } catch (exc: TimeoutException) {
+                            runOnUiThread(stopLoading)
+                            runOnUiThread {
+                                AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                        .setMessage(R.string.timeout_error_message)
+                                        .setPositiveButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                        .setNegativeButton(R.string.retry, { dialog, _ ->
+                                            run {
+                                                dialog.dismiss()
+                                                login(view)
+                                            }
+                                        })
+                                        .setCancelable(false)
+                                        .setIcon(R.drawable.ic_timer)
+                                        .setTitle(R.string.warning)
+                                        .show()
+                            }
+                        }
+                    }
+
+                    Thread(runnable).start()
+
+                    //writeAndStart(username, hashMap["password"]!!)
 
                 } else {
                     val rPassword = tilRepeatPassword.editText!!.text.toString()
@@ -106,30 +187,71 @@ class LoginActivity : AppCompatActivity() {
                                     val runnable = Runnable {
                                         val task = PUTTask(json)
                                         task.execute("user")
-
-                                        val response = task.get(time, TimeUnit.SECONDS)
-                                        runOnUiThread {
-                                            runOnUiThread(stopLoading)
-                                            if (response.getBoolean("status"))
-                                                writeAndStart(username, password)
-                                            else {
-
-                                                try {
+                                        try {
+                                            val response = task.get(time, TimeUnit.SECONDS)
+                                            runOnUiThread {
+                                                runOnUiThread(stopLoading)
+                                                if (response.getBoolean("status")) {
                                                     AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
-                                                            .setIcon(response.getInt("drawable"))
-                                                            .setMessage(response.getInt("message"))
+                                                            .setMessage(R.string.user_registered)
                                                             .setCancelable(false)
-                                                            .setPositiveButton(R.string.retry, { dialog, _ ->
-                                                                run {
-                                                                    dialog.dismiss()
-                                                                    login(view)
-                                                                }
-                                                            })
+                                                            .setPositiveButton(android.R.string.ok, { dialog, _ -> dialog.dismiss() })
+                                                            .setIcon(R.drawable.ic_mail_outline)
+                                                            .setTitle(R.string.done)
                                                             .show()
-                                                } catch (jexc: JSONException) {
-                                                    //TODO handle errors 100 mail already exists and 101 username already exists
+                                                    change(newacButton)
                                                 }
 
+                                                //writeAndStart(username, password)
+                                                else {
+
+                                                    try {
+                                                        AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                                                .setIcon(response.getInt("drawable"))
+                                                                .setTitle(R.string.warning)
+                                                                .setMessage(response.getInt("message"))
+                                                                .setCancelable(false)
+                                                                .setPositiveButton(R.string.retry, { dialog, _ ->
+                                                                    run {
+                                                                        dialog.dismiss()
+                                                                        login(view)
+                                                                    }
+                                                                })
+                                                                .setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                                                .show()
+                                                    } catch (jexc: JSONException) {
+                                                        //TODO handle errors 100 mail already exists and 101 username already exists
+                                                        Log.wtf(TAG, "GIMME THE ERROR: $json")
+
+                                                        when (response.getInt("errorCode")) {
+                                                            100 -> tilMail.error = getString(R.string.mail_not_valid)
+                                                            else -> AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                                                    .setMessage(R.string.error_during_registration)
+                                                                    .setCancelable(false)
+                                                                    .setPositiveButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                                                    .show()
+                                                        }
+
+                                                    }
+
+                                                }
+                                            }
+                                        } catch (exc: TimeoutException) {
+                                            runOnUiThread(stopLoading)
+                                            runOnUiThread {
+                                                AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                                        .setMessage(R.string.timeout_error_message)
+                                                        .setPositiveButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                                        .setNegativeButton(R.string.retry, { dialog, _ ->
+                                                            run {
+                                                                dialog.dismiss()
+                                                                login(view)
+                                                            }
+                                                        })
+                                                        .setCancelable(false)
+                                                        .setIcon(R.drawable.ic_timer)
+                                                        .setTitle(R.string.warning)
+                                                        .show()
                                             }
                                         }
                                     }

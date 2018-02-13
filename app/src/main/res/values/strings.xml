@@ -45,4 +45,10 @@
 
     <string name="mail_already_registered">E-mail address already registered</string>
 
+    <string name="error_during_registration">Error during registration</string>
+    <string name="user_registered">An email for the confirmation has been sent, check it out to complete the registration!</string>
+    <string name="user_needs_confirmation">This account needs confirmation, check your email address!</string>
+    <string name="wrong_credentials">Wrong credentials</string>
+    <string name="mail_not_valid">Email address not valid</string>
+    <string name="done">Done</string>
 </resources>

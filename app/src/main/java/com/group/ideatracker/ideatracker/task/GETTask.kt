@@ -24,44 +24,43 @@ class GETTask(hashMap: HashMap<String, String>) : AsyncTask<String, Void, JSONOb
 
     override fun doInBackground(vararg p0: String?): JSONObject {
 
+        var json = JSONObject()
+
         try {
             val urlConnection = URL("http://192.168.1.105:8000/${p0[0]}/?$params").openConnection() as HttpURLConnection
             urlConnection.setRequestProperty("Content-Type", "application/json")
             urlConnection.requestMethod = "GET"
-            urlConnection.doOutput = true
+            //urlConnection.doOutput = true
 
             Log.d(TAG, "connecting")
 
             val scanner = Scanner(urlConnection.inputStream)
 
-            try {
-                return JSONObject(scanner.nextLine())
-            } finally {
-                scanner.close()
-                urlConnection.inputStream.close()
-            }
+
+            json = JSONObject(scanner.nextLine())
+
+            scanner.close()
+            urlConnection.inputStream.close()
+
         } catch (exc: MalformedURLException) {
-            Log.wtf(TAG, "URL non valido")
 
-            val json = JSONObject()
-
-            /*json.apply {
-                put("username", false)
+            json.apply {
+                put("status", false)
                 put("message", R.string.invalid_url)
-            }*/
+                put("drawable", R.drawable.ic_web)
+            }
 
-            return json
+        } catch (io: IOException) {
 
-        } catch (exc: IOException) {
-            Log.e(TAG, "Connessione non riuscita")
-
-            val json = JSONObject()
             json.apply {
                 put("status", false)
                 put("message", R.string.cant_connect)
+                put("drawable", R.drawable.ic_lan_disconnect)
             }
-            return json
+
         }
+
+        return json
     }
 
     init {

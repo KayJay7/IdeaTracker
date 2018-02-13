@@ -29,4 +29,10 @@
     <string name="fill_field">Devi compilare questo campo</string>
     <string name="username_already_exists">Username già esistente</string>
     <string name="mail_already_registered">Indirizzo email già registrato</string>
+    <string name="error_during_registration">Errore durante la registrazione</string>
+    <string name="user_registered">Un\'email di conferma è stata inviata alla casella di posta, si prega di controllarla per completare la registrazione!</string>
+    <string name="wrong_credentials">Credenziali errate</string>
+    <string name="user_needs_confirmation">Questo utente richiede conferma, controlla la tua casella di posta!</string>
+    <string name="mail_not_valid">Indirizzo email non valido</string>
+    <string name="done">Fatto</string>
 </resources>
