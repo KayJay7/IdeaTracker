@@ -16,11 +16,11 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import android.widget.TextView
 import com.group.ideatracker.ideatracker.task.GETTask
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
-import kotlinx.android.synthetic.main.layout_profile.*
 import kotlinx.android.synthetic.main.nav_header_main.*
 import org.json.JSONException
 import java.util.concurrent.TimeUnit
@@ -34,13 +34,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private val startLoading = Runnable {
-        progressBarMain.visibility = View.VISIBLE
+        progressBar.visibility = View.VISIBLE
         scrInflateHere.alpha = 0.4f
         window.setFlags(16, 16)
     }
 
     private val stopLoading = Runnable {
-        progressBarMain.visibility = View.GONE
+        progressBar.visibility = View.GONE
         scrInflateHere.alpha = 1f
         window.clearFlags(16)
     }
@@ -62,6 +62,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
+        val txv = TextView(this)
+        txv.text = "Hello world"
+
+        //scrInflateHere.addView(txv)
+
+        //layoutInflater.inflate(R.layout.layout_profile,scrInflateHere)
         selectFirst()
     }
 
@@ -179,8 +185,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     private fun selectFirst() {
 
-        layoutInflater.inflate(R.layout.layout_profile, scrInflateHere)
-
         runOnUiThread(startLoading)
         Thread {
             val pass = sharedPreferences.getString(getString(R.string.preference_passkey), "")
@@ -198,13 +202,18 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 runOnUiThread(stopLoading)
 
                 runOnUiThread {
+
                     if (json.getBoolean("status")) {
+                        val view = layoutInflater.inflate(R.layout.layout_profile, scrInflateHere)
+
                         supportActionBar?.title = json.getJSONObject("data").getString("nome") + " " + json.getJSONObject("data").getString("cognome")
-                        textView2.text = json.getJSONObject("data").getString("nome")
-                        textView3.text = json.getJSONObject("data").getString("cognome")
-                        mail.text = (json.getJSONObject("data").getString("nome") + " " + json.getJSONObject("data").getString("cognome"))
-                        textView5.text = usr
-                        nome_cognome.text = json.getJSONObject("data").getString("mail")
+                        view.findViewById<TextView>(R.id.txvFirstName).text = json.getJSONObject("data").getString("nome")
+                        view.findViewById<TextView>(R.id.txvSurname).text = json.getJSONObject("data").getString("cognome")
+                        txvFirstNameSurname.text = (json.getJSONObject("data").getString("nome") + " " + json.getJSONObject("data").getString("cognome"))
+                        view.findViewById<TextView>(R.id.txvUsername).text = usr
+                        mail.text = json.getJSONObject("data").getString("mail")
+
+                        //layoutInflater.inflate(R.layout.layout_applications,scrInflateHere)
                     } else {
                         try {
                             AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
@@ -226,7 +235,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                                     AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
                                             .setTitle(R.string.warning)
                                             .setIcon(R.drawable.ic_lock)
-                                            .setMessage(R.string.user_needs_confirmation)
+                                            .setMessage(R.string.wrong_credentials)
                                             .setCancelable(false)
                                             .setPositiveButton(R.string.logout, { dialog, _ ->
                                                 run {

@@ -44,7 +44,7 @@
     <string name="mail_not_valid">Email address not valid</string>
     <string name="done">Done</string>
     <string name="total_applications">Total applications</string>
-    <string name="total_ideas_bugs">Total ideas or bugs segnalated</string>
+    <string name="total_ideas_bugs">Total ideas or bugs reported</string>
     <string name="received_ideas_bugs">Received ideas or bugs</string>
     <string name="received_answers">Received answers</string>
     <string name="def0" translatable="false">0</string>

@@ -11,7 +11,6 @@ import android.view.View
 import com.group.ideatracker.ideatracker.task.GETTask
 import com.group.ideatracker.ideatracker.task.PUTTask
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.content_main.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.security.MessageDigest
