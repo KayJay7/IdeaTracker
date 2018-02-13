@@ -11,6 +11,7 @@ import android.view.View
 import com.group.ideatracker.ideatracker.task.GETTask
 import com.group.ideatracker.ideatracker.task.PUTTask
 import kotlinx.android.synthetic.main.activity_login.*
+import kotlinx.android.synthetic.main.content_main.*
 import org.json.JSONException
 import org.json.JSONObject
 import java.security.MessageDigest
@@ -18,7 +19,8 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 class LoginActivity : AppCompatActivity() {
-    var alreadyHashed=false;
+    var alreadyHashed = false;
+
     companion object {
         private const val time: Long = 15
         private val TAG = LoginActivity::class.java.simpleName
@@ -32,11 +34,11 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-        val pass=sharedPreferences.getString(getString(R.string.preference_passkey), "")
-        val usr=sharedPreferences.getString(getString(R.string.preference_username), "")
+        val pass = sharedPreferences.getString(getString(R.string.preference_passkey), "")
+        val usr = sharedPreferences.getString(getString(R.string.preference_username), "")
         if (usr.isNotBlank() && pass.isNotBlank()) {
             //startActivity(Intent(this, MainActivity::class.java))
-            alreadyHashed=true
+            alreadyHashed = true
             tilUsername.editText!!.setText(usr)
             tilPassword.editText!!.setText(pass)
             login(loginButton)
@@ -45,7 +47,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private val startLoading = Runnable {
-        progressBar.visibility = View.VISIBLE
+        progressBar.visibility = View.GONE
         mainPage.alpha = 0.4f
         window.setFlags(16, 16)
     }
@@ -114,7 +116,7 @@ class LoginActivity : AppCompatActivity() {
                                                 tilPassword.error = getString(R.string.wrong_credentials)
                                                 tilUsername.error = getString(R.string.wrong_credentials)
                                                 tilPassword.editText!!.setText("")
-                                                alreadyHashed=false
+                                                alreadyHashed = false
                                             }
                                             201 -> AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
                                                     .setTitle(R.string.warning)
@@ -277,7 +279,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun hashString(type: String, input: String): String {
-        if(alreadyHashed)
+        if (alreadyHashed)
             return input
         val HEX_CHARS = "0123456789ABCDEF"
         val bytes = MessageDigest

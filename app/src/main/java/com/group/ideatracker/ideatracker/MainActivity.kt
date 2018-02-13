@@ -16,9 +16,15 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
+import com.group.ideatracker.ideatracker.task.GETTask
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
 import kotlinx.android.synthetic.main.content_main.*
+import kotlinx.android.synthetic.main.layout_profile.*
+import kotlinx.android.synthetic.main.nav_header_main.*
+import org.json.JSONException
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeoutException
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -28,13 +34,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     private val startLoading = Runnable {
-        progressBar.visibility = View.VISIBLE
+        progressBarMain.visibility = View.VISIBLE
         scrInflateHere.alpha = 0.4f
         window.setFlags(16, 16)
     }
 
     private val stopLoading = Runnable {
-        progressBar.visibility = View.GONE
+        progressBarMain.visibility = View.GONE
         scrInflateHere.alpha = 1f
         window.clearFlags(16)
     }
@@ -57,7 +63,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         nav_view.setNavigationItemSelectedListener(this)
 
         selectFirst()
-
     }
 
     override fun onBackPressed() {
@@ -176,8 +181,166 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         layoutInflater.inflate(R.layout.layout_profile, scrInflateHere)
 
-        supportActionBar?.title = "Nome cognome"
-        supportActionBar?.subtitle = "username99"
+        runOnUiThread(startLoading)
+        Thread {
+            val pass = sharedPreferences.getString(getString(R.string.preference_passkey), "")
+            val usr = sharedPreferences.getString(getString(R.string.preference_username), "")
+            val hm = HashMap<String, String>()
+            hm["username"] = usr
+            hm["password"] = pass
+            supportActionBar?.subtitle = usr
+            val gt = GETTask(hm)
+            gt.execute("user")
+            try {
+                val json = gt.get(time, TimeUnit.SECONDS)
+                Log.d(TAG, "ERROR CODE: $json")
+
+                runOnUiThread(stopLoading)
+
+                runOnUiThread {
+                    if (json.getBoolean("status")) {
+                        supportActionBar?.title = json.getJSONObject("data").getString("nome") + " " + json.getJSONObject("data").getString("cognome")
+                        textView2.text = json.getJSONObject("data").getString("nome")
+                        textView3.text = json.getJSONObject("data").getString("cognome")
+                        mail.text = (json.getJSONObject("data").getString("nome") + " " + json.getJSONObject("data").getString("cognome"))
+                        textView5.text = usr
+                        nome_cognome.text = json.getJSONObject("data").getString("mail")
+                    } else {
+                        try {
+                            AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                    .setIcon(json.getInt("drawable"))
+                                    .setMessage(json.getInt("message"))
+                                    .setTitle(R.string.warning)
+                                    .setCancelable(false)
+                                    .setPositiveButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                    .setNegativeButton(R.string.retry, { dialog, _ ->
+                                        run {
+                                            selectFirst()
+                                            dialog.dismiss()
+                                        }
+                                    })
+                                    .show()
+                        } catch (jexc: JSONException) {
+                            when (json.getInt("errorCode")) {
+                                200 -> {
+                                    AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                            .setTitle(R.string.warning)
+                                            .setIcon(R.drawable.ic_lock)
+                                            .setMessage(R.string.user_needs_confirmation)
+                                            .setCancelable(false)
+                                            .setPositiveButton(R.string.logout, { dialog, _ ->
+                                                run {
+                                                    AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                                            .setTitle(R.string.disconnect)
+                                                            .setMessage(R.string.are_you_sure_disconnect)
+                                                            .setPositiveButton(android.R.string.ok, { dialog, _ ->
+                                                                run {
+
+                                                                    val editor = sharedPreferences.edit()
+                                                                    editor.clear()
+
+                                                                    editor.apply()
+
+                                                                    dialog.dismiss()
+                                                                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                                                                    finish()
+                                                                }
+                                                            }).setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                                            .setCancelable(false)
+                                                            .show()
+                                                }
+                                            })
+                                            .setNegativeButton(R.string.retry, { dialog, _ ->
+                                                run {
+                                                    selectFirst()
+                                                    dialog.dismiss()
+                                                }
+                                            })
+                                            .show()
+                                }
+                                201 -> AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                        .setTitle(R.string.warning)
+                                        .setIcon(R.drawable.ic_markunread_mailbox)
+                                        .setMessage(R.string.user_needs_confirmation)
+                                        .setCancelable(false)
+                                        .setPositiveButton(R.string.logout, { dialog, _ ->
+                                            run {
+                                                AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                                        .setTitle(R.string.disconnect)
+                                                        .setMessage(R.string.are_you_sure_disconnect)
+                                                        .setPositiveButton(android.R.string.ok, { dialog, _ ->
+                                                            run {
+
+                                                                val editor = sharedPreferences.edit()
+                                                                editor.clear()
+
+                                                                editor.apply()
+
+                                                                dialog.dismiss()
+                                                                startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                                                                finish()
+                                                            }
+                                                        }).setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                                        .setCancelable(false)
+                                                        .show()
+                                            }
+                                        })
+                                        .setNegativeButton(R.string.retry, { dialog, _ ->
+                                            run {
+                                                selectFirst()
+                                                dialog.dismiss()
+                                            }
+                                        })
+                                        .show()
+
+                            }
+                        }
+
+                        //Log.e(TAG,"ERROR: $json")
+                    }
+                }
+            } catch (exc: TimeoutException) {
+                runOnUiThread(stopLoading)
+                runOnUiThread {
+                    AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                            .setMessage(R.string.timeout_error_message)
+                            .setPositiveButton(R.string.logout, { dialog, _ ->
+                                run {
+                                    AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                            .setTitle(R.string.disconnect)
+                                            .setMessage(R.string.are_you_sure_disconnect)
+                                            .setPositiveButton(android.R.string.ok, { dialog, _ ->
+                                                run {
+
+                                                    val editor = sharedPreferences.edit()
+                                                    editor.clear()
+
+                                                    editor.apply()
+
+                                                    dialog.dismiss()
+                                                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                                                    finish()
+                                                }
+                                            }).setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                            .setCancelable(false)
+                                            .show()
+                                }
+                            })
+                            .setNegativeButton(R.string.retry, { dialog, _ ->
+                                run {
+                                    dialog.dismiss()
+                                    selectFirst()
+                                }
+                            })
+                            .setCancelable(false)
+                            .setIcon(R.drawable.ic_timer)
+                            .setTitle(R.string.warning)
+                            .show()
+                }
+            }
+        }.start()
+        /*supportActionBar?.title = "Nome cognome"
+        supportActionBar?.subtitle = "username99"*/
     }
 
 }
