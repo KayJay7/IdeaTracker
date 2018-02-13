@@ -27,7 +27,7 @@ class GETTask(hashMap: HashMap<String, String>) : AsyncTask<String, Void, JSONOb
         var json = JSONObject()
 
         try {
-            val urlConnection = URL("http://192.168.1.105:8000/${p0[0]}/?$params").openConnection() as HttpURLConnection
+            val urlConnection = URL("http://kayjay.ns0.it:8000/${p0[0]}/?$params").openConnection() as HttpURLConnection
             urlConnection.setRequestProperty("Content-Type", "application/json")
             urlConnection.requestMethod = "GET"
             //urlConnection.doOutput = true

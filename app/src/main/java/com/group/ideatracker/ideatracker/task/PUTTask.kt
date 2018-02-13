@@ -21,7 +21,7 @@ class PUTTask(val toPut: JSONObject) : AsyncTask<String, Void, JSONObject>() {
         var json = JSONObject()
 
         try {
-            val urlConnection = URL("http://192.168.1.105:8000/${p0[0]}/").openConnection() as HttpURLConnection
+            val urlConnection = URL("http://kayjay.ns0.it:8000/${p0[0]}/").openConnection() as HttpURLConnection
             urlConnection.setRequestProperty("Content-Type", "application/json")
             urlConnection.requestMethod = "PUT"
             urlConnection.doOutput = true

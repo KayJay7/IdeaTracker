@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeoutException
 
 class LoginActivity : AppCompatActivity() {
-
+    var alreadyHashed=false;
     companion object {
         private const val time: Long = 15
         private val TAG = LoginActivity::class.java.simpleName
@@ -32,9 +32,15 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(applicationContext)
-
-        if (sharedPreferences.getString(getString(R.string.preference_passkey), "").isNotBlank() && sharedPreferences.getString(getString(R.string.preference_username), "").isNotBlank())
-            startActivity(Intent(this, MainActivity::class.java))
+        val pass=sharedPreferences.getString(getString(R.string.preference_passkey), "")
+        val usr=sharedPreferences.getString(getString(R.string.preference_username), "")
+        if (usr.isNotBlank() && pass.isNotBlank()) {
+            //startActivity(Intent(this, MainActivity::class.java))
+            alreadyHashed=true
+            tilUsername.editText!!.setText(usr)
+            tilPassword.editText!!.setText(pass)
+            login(loginButton)
+        }
 
     }
 
@@ -107,6 +113,8 @@ class LoginActivity : AppCompatActivity() {
                                             200 -> {
                                                 tilPassword.error = getString(R.string.wrong_credentials)
                                                 tilUsername.error = getString(R.string.wrong_credentials)
+                                                tilPassword.editText!!.setText("")
+                                                alreadyHashed=false
                                             }
                                             201 -> AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
                                                     .setTitle(R.string.warning)
@@ -269,6 +277,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun hashString(type: String, input: String): String {
+        if(alreadyHashed)
+            return input
         val HEX_CHARS = "0123456789ABCDEF"
         val bytes = MessageDigest
                 .getInstance(type)
