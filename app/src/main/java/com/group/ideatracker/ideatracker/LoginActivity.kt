@@ -46,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private val startLoading = Runnable {
-        progressBar.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
         mainPage.alpha = 0.4f
         window.setFlags(16, 16)
     }

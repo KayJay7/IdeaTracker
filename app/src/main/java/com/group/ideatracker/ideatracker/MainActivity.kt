@@ -10,6 +10,9 @@ import android.support.design.widget.NavigationView
 import android.support.v4.view.GravityCompat
 import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.DefaultItemAnimator
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.SearchView
 import android.util.Log
 import android.view.Menu
@@ -17,6 +20,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import com.group.ideatracker.ideatracker.recycler.CardAdapter
 import com.group.ideatracker.ideatracker.task.GETTask
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.app_bar_main.*
@@ -62,12 +66,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
         nav_view.setNavigationItemSelectedListener(this)
 
-        val txv = TextView(this)
-        txv.text = "Hello world"
-
-        //scrInflateHere.addView(txv)
-
-        //layoutInflater.inflate(R.layout.layout_profile,scrInflateHere)
         selectFirst()
     }
 
@@ -107,8 +105,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 selectFirst()
             }
             R.id.appRadio -> {
-                scrInflateHere.removeAllViews()
-                layoutInflater.inflate(R.layout.layout_applications, scrInflateHere)
+                selectPersonalAppList()
             }
             R.id.bugsRadio -> {
                 scrInflateHere.removeAllViews()
@@ -182,6 +179,77 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             runnable.run()
         }).start()
     }*/
+
+    private fun selectPersonalAppList() {
+        runOnUiThread(startLoading)
+        Thread {
+            val hashMap = HashMap<String, String>()
+
+            hashMap["username"] = sharedPreferences.getString(getString(R.string.preference_username), "")
+
+            val task = GETTask(hashMap)
+            task.execute("apps")
+
+            try {
+                val json = task.get(time, TimeUnit.SECONDS)
+                runOnUiThread(stopLoading)
+
+                if (json.getBoolean("status")) {
+                    runOnUiThread {
+                        scrInflateHere.removeAllViews()
+                        val view = layoutInflater.inflate(R.layout.layout_applications, scrInflateHere)
+
+                        val recycler = view.findViewById<RecyclerView>(R.id.recycler)
+                        recycler.setHasFixedSize(true)
+                        recycler.layoutManager = LinearLayoutManager(applicationContext)
+                        recycler.itemAnimator = DefaultItemAnimator()
+                        recycler.adapter = CardAdapter(json.getJSONArray("data"), this)
+                    }
+                }
+
+            } catch (exc: TimeoutException) {
+                runOnUiThread(stopLoading)
+                runOnUiThread {
+                    AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                            .setMessage(R.string.timeout_error_message)
+                            .setPositiveButton(R.string.logout, { dialog, _ ->
+                                run {
+                                    AlertDialog.Builder(this, android.R.style.Theme_Material_Dialog_Alert)
+                                            .setTitle(R.string.disconnect)
+                                            .setMessage(R.string.are_you_sure_disconnect)
+                                            .setPositiveButton(android.R.string.ok, { dialog, _ ->
+                                                run {
+
+                                                    val editor = sharedPreferences.edit()
+                                                    editor.clear()
+
+                                                    editor.apply()
+
+                                                    dialog.dismiss()
+                                                    startActivity(Intent(this@MainActivity, LoginActivity::class.java))
+                                                    finish()
+                                                }
+                                            }).setNegativeButton(android.R.string.cancel, { dialog, _ -> dialog.dismiss() })
+                                            .setCancelable(false)
+                                            .show()
+                                }
+                            })
+                            .setNegativeButton(R.string.retry, { dialog, _ ->
+                                run {
+                                    dialog.dismiss()
+                                    selectFirst()
+                                }
+                            })
+                            .setCancelable(false)
+                            .setIcon(R.drawable.ic_timer)
+                            .setTitle(R.string.warning)
+                            .show()
+                }
+            }
+
+        }.start()
+
+    }
 
     private fun selectFirst() {
 
